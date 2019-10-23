@@ -5,12 +5,23 @@ using UnityEngine;
 public class Controller : MonoBehaviour
 {
     public float rotateSpeed;
+    public Puzzle puzzle;
 
-    public GameObject selectedObject;
+    private GameObject selectedObject;
     
+    private int idleIndex;
+    public bool Idle
+    {
+        get
+        {
+            return (idleIndex <= 0);
+        }
+    }
+
     private void Start()
     {
         selectedObject = null;
+        puzzle.Init();
     }
     
     private void Update()
@@ -29,9 +40,22 @@ public class Controller : MonoBehaviour
                 SelectObject();
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            puzzle.Solve();
+        }
+    }
+    
+    private void LateUpdate() 
+    {
+        if (idleIndex > 0)
+        {
+            idleIndex--;
+        }
     }
 
-    void SelectObject()
+    private void SelectObject()
     {
         Ray ray;
 
@@ -40,15 +64,46 @@ public class Controller : MonoBehaviour
         {
             selectedObject = hit.collider.gameObject;
         }
+        Busy();
     }
 
-    void RotateObject()
+    private void RotateObject()
     {
+        Transform cam;
         float x;
         float y;
 
+        cam = Camera.main.transform;
         x = Input.GetAxis("Mouse Y") * rotateSpeed * Time.deltaTime;
-        y = Input.GetAxis("Mouse X") * rotateSpeed * Time.deltaTime;
-        selectedObject.transform.rotation = Quaternion.Euler(selectedObject.transform.rotation.eulerAngles.x + x, selectedObject.transform.rotation.eulerAngles.y - y, 0.0f);
+        y = Input.GetAxis("Mouse X") * rotateSpeed * Time.deltaTime * -1;
+        selectedObject.transform.RotateAround(selectedObject.transform.position, cam.right, x);
+        selectedObject.transform.RotateAround(selectedObject.transform.position, cam.up, y);
+        Busy();
+    }
+
+    private void Busy()
+    {
+        idleIndex = 5;
+    }
+
+    private void OnGUI()
+    {
+        Texture2D t;
+
+        if (Idle)
+        {
+            t = new Texture2D(1, 1);
+            if (puzzle.Correct)
+            {
+                t.SetPixel(0, 0, Color.green);
+            }
+            else
+            {
+                t.SetPixel(0, 0, Color.red);
+            }
+            t.Apply();
+            GUI.DrawTexture(new Rect(0, Screen.height - 100, 100, 100), t);
+        }
+        puzzle.DrawPreview();
     }
 }
