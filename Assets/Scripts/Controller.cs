@@ -26,21 +26,14 @@ public class Controller : MonoBehaviour
     
     private void Update()
     {
-        if (Input.GetKey(KeyCode.LeftControl))
+        if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            if (Input.GetKey(KeyCode.Mouse0))
-            {
-                RotateObject();
-            }
+            SelectObject();
         }
-        else
+        else if (Input.GetKey(KeyCode.Mouse0))
         {
-            if (Input.GetKeyDown(KeyCode.Mouse0))
-            {
-                SelectObject();
-            }
+            RotateObject();
         }
-
         if (Input.GetKeyDown(KeyCode.Space))
         {
             puzzle.Solve();
@@ -73,11 +66,20 @@ public class Controller : MonoBehaviour
         float x;
         float y;
 
-        cam = Camera.main.transform;
-        x = Input.GetAxis("Mouse Y") * rotateSpeed * Time.deltaTime;
-        y = Input.GetAxis("Mouse X") * rotateSpeed * Time.deltaTime * -1;
-        selectedObject.transform.RotateAround(selectedObject.transform.position, cam.right, x);
-        selectedObject.transform.RotateAround(selectedObject.transform.position, cam.up, y);
+        if (Input.GetKey(KeyCode.LeftControl))
+        {
+            cam = Camera.main.transform;
+            x = Input.GetAxis("Mouse Y") * rotateSpeed * Time.deltaTime;
+            y = Input.GetAxis("Mouse X") * rotateSpeed * Time.deltaTime * -1;
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                selectedObject.transform.RotateAround(selectedObject.transform.position, cam.right, x);
+            }
+            else
+            {
+                selectedObject.transform.RotateAround(selectedObject.transform.position, cam.up, y);
+            }
+        }
         Busy();
     }
 

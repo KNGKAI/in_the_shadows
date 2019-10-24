@@ -2,10 +2,37 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public struct Piece
+{
+    public Vector3 rootPosition;
+    public Quaternion rootRotation;
+    public Transform transform;
+}
+
 [System.Serializable]
 public class Puzzle : MonoBehaviour
 {
     public Texture2D preview;
+
+    private List<Piece> pieces;
+
+    private void Awake()
+    {
+        Transform child;
+
+        pieces = new List<Piece>();
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            Piece piece;
+
+            child = transform.GetChild(i);
+            piece = new Piece();
+            piece.transform = child;
+            piece.rootPosition = child.position;
+            piece.rootRotation = child.rotation;
+            pieces.Add(piece);
+        }
+    }
 
     public static float PositionDeadzone
     {
@@ -27,18 +54,20 @@ public class Puzzle : MonoBehaviour
     {
         get
         {
-            Transform child;
+            Piece piece;
             Quaternion rotation;
-            Vector3 anchor;
-            
-            anchor = transform.GetChild(0).position;
-            for (int i = 0; i < transform.childCount; i++)
+            Vector3 position;
+            Vector3 offset;
+
+            offset = pieces[0].transform.position;
+            for (int i = 0; i < pieces.Count; i++)
             {
-                child = transform.GetChild(i);
-                rotation = child.rotation;
+                piece = pieces[i];
+                position = piece.transform.position - piece.rootPosition - offset;
+                rotation = piece.transform.rotation * Quaternion.Inverse(piece.rootRotation);
                 if (
-                    Mathf.Abs(anchor.x - child.position.x) > Puzzle.PositionDeadzone ||
-                    Mathf.Abs(anchor.y - child.position.y) > Puzzle.PositionDeadzone ||
+                    Mathf.Abs(position.x) > Puzzle.PositionDeadzone ||
+                    Mathf.Abs(position.y) > Puzzle.PositionDeadzone ||
                     Mathf.Abs(rotation.x) * Mathf.Rad2Deg > Puzzle.RotationDeadzone ||
                     Mathf.Abs(rotation.y) * Mathf.Rad2Deg > Puzzle.RotationDeadzone ||
                     Mathf.Abs(rotation.z) * Mathf.Rad2Deg > Puzzle.RotationDeadzone
@@ -63,7 +92,7 @@ public class Puzzle : MonoBehaviour
         for (int i = 0; i < transform.childCount; i++)
         {
             child = transform.GetChild(i);
-            child.transform.localPosition = new Vector3(
+            child.transform.position = new Vector3(
                 Random.Range(-1.0f, 1.0f),
                 Random.Range(-1.0f, 1.0f),
                 Random.Range(-1.0f, 1.0f)
@@ -84,6 +113,9 @@ public class Puzzle : MonoBehaviour
 
     private IEnumerator SolveProcess()
     {
+        Piece piece;
+        Quaternion rotation;
+        Vector3 position;
         float speed;
         bool busy;
 
@@ -91,20 +123,21 @@ public class Puzzle : MonoBehaviour
         busy = true;
         while (busy)
         {
-            Transform child;
             bool done;
 
             done = true;
-            for (int i = 0; i < transform.childCount; i++)
+            for (int i = 0; i < pieces.Count; i++)
             {
-                child = transform.GetChild(i);
-                child.transform.localPosition = Vector3.Lerp(child.transform.position, Vector3.zero, speed);
-                child.transform.rotation = Quaternion.Lerp(child.transform.rotation, Quaternion.identity, speed);
-                if (child.transform.localPosition.magnitude > 0.1f)
+                piece = pieces[i];
+                position = piece.rootPosition;
+                rotation = piece.rootRotation;
+                piece.transform.localPosition = Vector3.Lerp(piece.transform.position, position, speed);
+                piece.transform.rotation = Quaternion.Lerp(piece.transform.rotation, rotation, speed);
+                if (piece.transform.position.magnitude > 0.1f)
                 {
                     done = false;
                 }
-                if (child.transform.rotation.eulerAngles.magnitude > 0.01f)
+                if (piece.transform.rotation.eulerAngles.magnitude > 0.01f)
                 {
                     done = false;
                 }
