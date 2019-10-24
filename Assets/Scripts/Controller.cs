@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Controller : MonoBehaviour
 {
+    public float moveSpeed;
     public float rotateSpeed;
     public Puzzle puzzle;
 
@@ -32,7 +33,14 @@ public class Controller : MonoBehaviour
         }
         else if (Input.GetKey(KeyCode.Mouse0))
         {
-            RotateObject();
+            if (Input.GetKey(KeyCode.LeftControl))
+            {
+                RotateObject();
+            }
+            else
+            {
+                MoveObject();
+            }
         }
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -66,20 +74,30 @@ public class Controller : MonoBehaviour
         float x;
         float y;
 
-        if (Input.GetKey(KeyCode.LeftControl))
+        cam = Camera.main.transform;
+        x = Input.GetAxis("Mouse Y") * rotateSpeed * Time.deltaTime;
+        y = Input.GetAxis("Mouse X") * rotateSpeed * Time.deltaTime * -1;
+        if (Input.GetKey(KeyCode.LeftShift))
         {
-            cam = Camera.main.transform;
-            x = Input.GetAxis("Mouse Y") * rotateSpeed * Time.deltaTime;
-            y = Input.GetAxis("Mouse X") * rotateSpeed * Time.deltaTime * -1;
-            if (Input.GetKey(KeyCode.LeftShift))
-            {
-                selectedObject.transform.RotateAround(selectedObject.transform.position, cam.right, x);
-            }
-            else
-            {
-                selectedObject.transform.RotateAround(selectedObject.transform.position, cam.up, y);
-            }
+            selectedObject.transform.RotateAround(selectedObject.transform.position, cam.right, x);
         }
+        else
+        {
+            selectedObject.transform.RotateAround(selectedObject.transform.position, cam.up, y);
+        }
+        Busy();
+    }
+
+    private void MoveObject()
+    {
+        Vector3 move;
+        float x;
+        float y;
+
+        x = Input.GetAxis("Mouse X") * moveSpeed * Time.deltaTime;
+        y = Input.GetAxis("Mouse Y") * moveSpeed * Time.deltaTime;
+        move = new Vector3(x, y, 0.0f);
+        selectedObject.transform.position = selectedObject.transform.position + move;
         Busy();
     }
 

@@ -2,19 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct Piece
-{
-    public Vector3 rootPosition;
-    public Quaternion rootRotation;
-    public Transform transform;
-}
-
 [System.Serializable]
 public class Puzzle : MonoBehaviour
 {
     public Texture2D preview;
 
     private List<Piece> pieces;
+    private Vector3 rootOffset;
 
     private void Awake()
     {
@@ -32,13 +26,14 @@ public class Puzzle : MonoBehaviour
             piece.rootRotation = child.rotation;
             pieces.Add(piece);
         }
+        rootOffset = pieces[0].rootPosition;
     }
 
     public static float PositionDeadzone
     {
         get
         {
-            return (0.2f);
+            return (0.5f);
         }
     }
 
@@ -46,7 +41,7 @@ public class Puzzle : MonoBehaviour
     {
         get
         {
-            return (3.0f);
+            return (10.0f);
         }
     }
 
@@ -59,15 +54,15 @@ public class Puzzle : MonoBehaviour
             Vector3 position;
             Vector3 offset;
 
-            offset = pieces[0].transform.position;
+            offset = pieces[0].transform.position - rootOffset;
             for (int i = 0; i < pieces.Count; i++)
             {
                 piece = pieces[i];
                 position = piece.transform.position - piece.rootPosition - offset;
                 rotation = piece.transform.rotation * Quaternion.Inverse(piece.rootRotation);
                 if (
-                    Mathf.Abs(position.x) > Puzzle.PositionDeadzone ||
-                    Mathf.Abs(position.y) > Puzzle.PositionDeadzone ||
+                    Mathf.Abs(position.x) > Puzzle.PositionDeadzone * piece.transform.localScale.x ||
+                    Mathf.Abs(position.y) > Puzzle.PositionDeadzone * piece.transform.localScale.y ||
                     Mathf.Abs(rotation.x) * Mathf.Rad2Deg > Puzzle.RotationDeadzone ||
                     Mathf.Abs(rotation.y) * Mathf.Rad2Deg > Puzzle.RotationDeadzone ||
                     Mathf.Abs(rotation.z) * Mathf.Rad2Deg > Puzzle.RotationDeadzone
@@ -119,7 +114,7 @@ public class Puzzle : MonoBehaviour
         float speed;
         bool busy;
 
-        speed = 0.02f;
+        speed = 0.05f;
         busy = true;
         while (busy)
         {
@@ -133,11 +128,13 @@ public class Puzzle : MonoBehaviour
                 rotation = piece.rootRotation;
                 piece.transform.localPosition = Vector3.Lerp(piece.transform.position, position, speed);
                 piece.transform.rotation = Quaternion.Lerp(piece.transform.rotation, rotation, speed);
-                if (piece.transform.position.magnitude > 0.1f)
+                position = piece.transform.position - piece.rootPosition;
+                rotation = piece.transform.rotation * Quaternion.Inverse(piece.rootRotation);
+                if (position.magnitude > 0.1f)
                 {
-                    done = false;
+                    //done = false;
                 }
-                if (piece.transform.rotation.eulerAngles.magnitude > 0.01f)
+                if (rotation.eulerAngles.magnitude > 0.1f)
                 {
                     done = false;
                 }
