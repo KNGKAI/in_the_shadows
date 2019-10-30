@@ -495,6 +495,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6148e6403040448b0a1d2f58421f52e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveSpeed: 20
   rotateSpeed: 180
   puzzle: {fileID: 112293505}
 --- !u!1001 &7985803228898522277

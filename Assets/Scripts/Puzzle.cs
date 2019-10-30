@@ -80,6 +80,17 @@ public class Puzzle : MonoBehaviour
         GUI.DrawTexture(new Rect(0, 0, 100, 100), preview);
     }
 
+    public void DrawGizmos()
+    {
+        Vector3 offset;
+
+        offset = pieces[0].transform.position - rootOffset;
+        for (int i = 0; i < pieces.Count; i++)
+        {
+            pieces[i].Draw(offset);
+        }
+    }
+
     public void Init()
     {
         Transform child;

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Controller : MonoBehaviour
 {
+    public bool debug;
+    [Space(5)]
     public float moveSpeed;
     public float rotateSpeed;
     public Puzzle puzzle;
@@ -56,6 +58,35 @@ public class Controller : MonoBehaviour
         }
     }
 
+    private void OnGUI()
+    {
+        Texture2D t;
+
+        if (Idle)
+        {
+            t = new Texture2D(1, 1);
+            if (puzzle.Correct)
+            {
+                t.SetPixel(0, 0, Color.green);
+            }
+            else
+            {
+                t.SetPixel(0, 0, Color.red);
+            }
+            t.Apply();
+            GUI.DrawTexture(new Rect(0, Screen.height - 100, 100, 100), t);
+        }
+        //bpuzzle.DrawPreview();
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (Application.isPlaying && debug)
+        {
+            puzzle.DrawGizmos();
+        }
+    }
+
     private void SelectObject()
     {
         Ray ray;
@@ -104,26 +135,5 @@ public class Controller : MonoBehaviour
     private void Busy()
     {
         idleIndex = 5;
-    }
-
-    private void OnGUI()
-    {
-        Texture2D t;
-
-        if (Idle)
-        {
-            t = new Texture2D(1, 1);
-            if (puzzle.Correct)
-            {
-                t.SetPixel(0, 0, Color.green);
-            }
-            else
-            {
-                t.SetPixel(0, 0, Color.red);
-            }
-            t.Apply();
-            GUI.DrawTexture(new Rect(0, Screen.height - 100, 100, 100), t);
-        }
-        puzzle.DrawPreview();
     }
 }
