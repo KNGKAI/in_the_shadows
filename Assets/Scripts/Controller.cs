@@ -105,6 +105,10 @@ public class Controller : MonoBehaviour
         float x;
         float y;
 
+        if (selectedObject == null)
+        {
+            return;
+        }
         cam = Camera.main.transform;
         x = Input.GetAxis("Mouse Y") * rotateSpeed * Time.deltaTime;
         y = Input.GetAxis("Mouse X") * rotateSpeed * Time.deltaTime * -1;
@@ -125,6 +129,10 @@ public class Controller : MonoBehaviour
         float x;
         float y;
 
+        if (selectedObject == null)
+        {
+            return;
+        }
         x = Input.GetAxis("Mouse X") * moveSpeed * Time.deltaTime;
         y = Input.GetAxis("Mouse Y") * moveSpeed * Time.deltaTime;
         move = new Vector3(x, y, 0.0f);
