@@ -76,7 +76,6 @@ public class Controller : MonoBehaviour
             t.Apply();
             GUI.DrawTexture(new Rect(0, Screen.height - 100, 100, 100), t);
         }
-        //bpuzzle.DrawPreview();
     }
 
     private void OnDrawGizmos()
@@ -110,15 +109,15 @@ public class Controller : MonoBehaviour
             return;
         }
         cam = Camera.main.transform;
-        x = Input.GetAxis("Mouse Y") * rotateSpeed * Time.deltaTime;
-        y = Input.GetAxis("Mouse X") * rotateSpeed * Time.deltaTime * -1;
+        x = Input.GetAxis("Mouse X") * rotateSpeed * Time.deltaTime;
+        y = Input.GetAxis("Mouse Y") * rotateSpeed * Time.deltaTime;
         if (Input.GetKey(KeyCode.LeftShift))
         {
-            selectedObject.transform.RotateAround(selectedObject.transform.position, cam.right, x);
+            selectedObject.transform.RotateAround(selectedObject.transform.position, Vector3.up, -x);
         }
         else
         {
-            selectedObject.transform.RotateAround(selectedObject.transform.position, cam.up, y);
+            selectedObject.transform.RotateAround(selectedObject.transform.position, Vector3.right, y);
         }
         Busy();
     }

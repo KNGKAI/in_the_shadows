@@ -7,27 +7,9 @@ public class Puzzle : MonoBehaviour
 {
     public Texture2D preview;
 
-    private List<Piece> pieces;
+    public Piece[] pieces;
+    
     private Vector3 rootOffset;
-
-    private void Awake()
-    {
-        Transform child;
-
-        pieces = new List<Piece>();
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            Piece piece;
-
-            child = transform.GetChild(i);
-            piece = new Piece();
-            piece.transform = child;
-            piece.rootPosition = child.position;
-            piece.rootRotation = child.rotation;
-            pieces.Add(piece);
-        }
-        rootOffset = pieces[0].rootPosition;
-    }
 
     public static float PositionDeadzone
     {
@@ -41,32 +23,25 @@ public class Puzzle : MonoBehaviour
     {
         get
         {
-            return (10.0f);
+            return (5.0f);
         }
+    }
+
+    private void Awake()
+    {
+        rootOffset = pieces[0].transform.position;
     }
 
     public bool Correct
     {
         get
         {
-            Piece piece;
-            Quaternion rotation;
-            Vector3 position;
             Vector3 offset;
 
             offset = pieces[0].transform.position - rootOffset;
-            for (int i = 0; i < pieces.Count; i++)
+            for (int i = 0; i < pieces.Length; i++)
             {
-                piece = pieces[i];
-                position = piece.transform.position - piece.rootPosition - offset;
-                rotation = piece.transform.rotation * Quaternion.Inverse(piece.rootRotation);
-                if (
-                    Mathf.Abs(position.x) > Puzzle.PositionDeadzone * piece.transform.localScale.x ||
-                    Mathf.Abs(position.y) > Puzzle.PositionDeadzone * piece.transform.localScale.y ||
-                    Mathf.Abs(rotation.x) * Mathf.Rad2Deg > Puzzle.RotationDeadzone ||
-                    Mathf.Abs(rotation.y) * Mathf.Rad2Deg > Puzzle.RotationDeadzone ||
-                    Mathf.Abs(rotation.z) * Mathf.Rad2Deg > Puzzle.RotationDeadzone
-                    )
+                if (!pieces[i].Correct(offset))
                 {
                     return (false);
                 }
@@ -85,7 +60,7 @@ public class Puzzle : MonoBehaviour
         Vector3 offset;
 
         offset = pieces[0].transform.position - rootOffset;
-        for (int i = 0; i < pieces.Count; i++)
+        for (int i = 0; i < pieces.Length; i++)
         {
             pieces[i].Draw(offset);
         }
@@ -93,17 +68,17 @@ public class Puzzle : MonoBehaviour
 
     public void Init()
     {
-        Transform child;
+        Transform piece;
 
-        for (int i = 0; i < transform.childCount; i++)
+        for (int i = 0; i < pieces.Length; i++)
         {
-            child = transform.GetChild(i);
-            child.transform.position = new Vector3(
+            piece = pieces[i].transform;
+            piece.transform.position = new Vector3(
                 Random.Range(-1.0f, 1.0f),
                 Random.Range(-1.0f, 1.0f),
-                Random.Range(-1.0f, 1.0f)
+                0.0f//Random.Range(-1.0f, 1.0f)
                 );
-            child.transform.rotation = new Quaternion(
+            piece.transform.rotation = new Quaternion(
                 Random.Range(-1.0f, 1.0f),
                 Random.Range(-1.0f, 1.0f),
                 Random.Range(-1.0f, 1.0f),
@@ -122,6 +97,7 @@ public class Puzzle : MonoBehaviour
         Piece piece;
         Quaternion rotation;
         Vector3 position;
+        Vector3 angles;
         float speed;
         bool busy;
 
@@ -132,15 +108,27 @@ public class Puzzle : MonoBehaviour
             bool done;
 
             done = true;
-            for (int i = 0; i < pieces.Count; i++)
+            for (int i = 0; i < pieces.Length; i++)
             {
                 piece = pieces[i];
                 position = piece.rootPosition;
                 rotation = piece.rootRotation;
-                piece.transform.localPosition = Vector3.Lerp(piece.transform.position, position, speed);
+                if (piece.flipY && piece.transform.eulerAngles.y > 90.0f && piece.transform.eulerAngles.y < 270.0f)
+                {
+                    angles = rotation.eulerAngles;
+                    angles.y += 180;
+                    rotation = Quaternion.Euler(angles);
+                }
+                if (piece.flipX && piece.transform.eulerAngles.x > 90.0f && piece.transform.eulerAngles.x < 270.0f)
+                {
+                    angles = rotation.eulerAngles;
+                    angles.x += 180;
+                    rotation = Quaternion.Euler(angles);
+                }
+                piece.transform.localPosition = Vector3.Lerp(piece.transform.localPosition, position, speed);
                 piece.transform.rotation = Quaternion.Lerp(piece.transform.rotation, rotation, speed);
-                position = piece.transform.position - piece.rootPosition;
-                rotation = piece.transform.rotation * Quaternion.Inverse(piece.rootRotation);
+                position = piece.transform.position - position;
+                rotation = piece.transform.rotation * Quaternion.Inverse(rotation);
                 if (position.magnitude > 0.1f)
                 {
                     //done = false;
