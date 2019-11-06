@@ -5,11 +5,17 @@ using UnityEngine;
 [System.Serializable]
 public class Puzzle : MonoBehaviour
 {
-    public Texture2D preview;
+    public string puzzleName;
+
+    public bool yRotation;
+    public bool xRotation;
+    public bool moveable;
 
     public Piece[] pieces;
     
     private Vector3 rootOffset;
+
+    private bool solving;
 
     public static float PositionDeadzone
     {
@@ -23,7 +29,7 @@ public class Puzzle : MonoBehaviour
     {
         get
         {
-            return (5.0f);
+            return (10.0f);
         }
     }
 
@@ -50,11 +56,6 @@ public class Puzzle : MonoBehaviour
         }
     }
 
-    public void DrawPreview()
-    {
-        GUI.DrawTexture(new Rect(0, 0, 100, 100), preview);
-    }
-
     public void DrawGizmos()
     {
         Vector3 offset;
@@ -73,23 +74,31 @@ public class Puzzle : MonoBehaviour
         for (int i = 0; i < pieces.Length; i++)
         {
             piece = pieces[i].transform;
-            piece.transform.position = new Vector3(
-                Random.Range(-1.0f, 1.0f),
-                Random.Range(-1.0f, 1.0f),
-                0.0f//Random.Range(-1.0f, 1.0f)
-                );
-            piece.transform.rotation = new Quaternion(
-                Random.Range(-1.0f, 1.0f),
-                Random.Range(-1.0f, 1.0f),
-                Random.Range(-1.0f, 1.0f),
-                1
-                );
+            if (moveable)
+            {
+                piece.transform.position = new Vector3(
+                    Random.Range(-1.0f, 1.0f),
+                    Random.Range(-1.0f, 1.0f),
+                    0.0f//Random.Range(-1.0f, 1.0f)
+                    );
+            }
+            if (yRotation)
+            {
+                piece.Rotate(0, Random.Range(-90.0f, 90.0f), 0);
+            }
+            if (xRotation)
+            {
+                piece.Rotate(Random.Range(-90.0f, 90.0f), 0, 0);
+            }
         }
     }
 
     public void Solve()
     {
-        StartCoroutine(SolveProcess());
+        if (!solving)
+        {
+            StartCoroutine(SolveProcess());
+        }
     }
 
     private IEnumerator SolveProcess()
@@ -103,6 +112,7 @@ public class Puzzle : MonoBehaviour
 
         speed = 0.05f;
         busy = true;
+        solving = true;
         while (busy)
         {
             bool done;
@@ -144,7 +154,9 @@ public class Puzzle : MonoBehaviour
                 busy = false;
             }
         }
-        Debug.Log("Solved");
-        yield return null;
+        Debug.Log(puzzleName + " solved");
+        PlayerPrefs.SetInt(puzzleName, 1);
+        yield return new WaitForSeconds(3.0f);
+        Level.LoadMenu();
     }
 }

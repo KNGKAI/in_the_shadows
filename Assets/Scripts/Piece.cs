@@ -24,10 +24,12 @@ public class Piece : MonoBehaviour
 
         root = offset - rootPosition;
         position = transform.position - offset;
+        
         Gizmos.color = Color.yellow;
         Gizmos.DrawSphere(root, 0.2f);
         Gizmos.color = Color.blue;
         Gizmos.DrawSphere(position, 0.2f);
+
         Gizmos.color = Color.white;
         Gizmos.DrawLine(position, position + transform.forward);
         Gizmos.DrawLine(position, position + transform.up);
@@ -42,27 +44,31 @@ public class Piece : MonoBehaviour
 
         position = transform.position - rootPosition - offset;
         rotation = transform.rotation * Quaternion.Inverse(rootRotation);
+
         x = Mathf.Abs(position.x);
         y = Mathf.Abs(position.y);
         a = rotation.eulerAngles.x;
+        b = rotation.eulerAngles.y;
+        c = rotation.eulerAngles.z;
+
         if (a > 180)
         {
             a = a - 180;
         }
-        b = rotation.eulerAngles.y;
         if (b > 180)
         {
             b = b - 180;
         }
-        c = rotation.eulerAngles.z;
         if (c > 180)
         {
             c = c - 180;
         }
+
         if (x > Puzzle.PositionDeadzone * transform.localScale.x || y > Puzzle.PositionDeadzone * transform.localScale.y)
         {
             return (false);
         }
+
         if(a > Puzzle.RotationDeadzone)
         {
             if (flipX)

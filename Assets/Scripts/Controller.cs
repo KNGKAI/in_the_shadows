@@ -29,6 +29,7 @@ public class Controller : MonoBehaviour
     
     private void Update()
     {
+        if (puzzle.solving) { return; }
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             SelectObject();
@@ -47,6 +48,17 @@ public class Controller : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             puzzle.Solve();
+        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Level.LoadMenu();
+        }
+        if (Idle)
+        {
+            if (puzzle.Correct)
+            {
+                puzzle.Solve();
+            }
         }
     }
     
@@ -113,11 +125,17 @@ public class Controller : MonoBehaviour
         y = Input.GetAxis("Mouse Y") * rotateSpeed * Time.deltaTime;
         if (Input.GetKey(KeyCode.LeftShift))
         {
-            selectedObject.transform.RotateAround(selectedObject.transform.position, Vector3.up, -x);
+            if (puzzle.xRotation)
+            {
+                selectedObject.transform.RotateAround(selectedObject.transform.position, Vector3.right, y);
+            }
         }
         else
         {
-            selectedObject.transform.RotateAround(selectedObject.transform.position, Vector3.right, y);
+            if (puzzle.yRotation)
+            {
+                selectedObject.transform.RotateAround(selectedObject.transform.position, Vector3.up, -x);
+            }
         }
         Busy();
     }
@@ -128,19 +146,19 @@ public class Controller : MonoBehaviour
         float x;
         float y;
 
-        if (selectedObject == null)
+        if (selectedObject == null) { return; }
+        if (puzzle.moveable)
         {
-            return;
+            x = Input.GetAxis("Mouse X") * moveSpeed * Time.deltaTime;
+            y = Input.GetAxis("Mouse Y") * moveSpeed * Time.deltaTime;
+            move = new Vector3(x, y, 0.0f);
+            selectedObject.transform.position = selectedObject.transform.position + move;
+            Busy();
         }
-        x = Input.GetAxis("Mouse X") * moveSpeed * Time.deltaTime;
-        y = Input.GetAxis("Mouse Y") * moveSpeed * Time.deltaTime;
-        move = new Vector3(x, y, 0.0f);
-        selectedObject.transform.position = selectedObject.transform.position + move;
-        Busy();
     }
 
     private void Busy()
     {
-        idleIndex = 5;
+        idleIndex = 20;
     }
 }

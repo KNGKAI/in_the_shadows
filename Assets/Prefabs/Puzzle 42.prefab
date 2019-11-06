@@ -45,7 +45,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c51f07552f5dc4316b09c97c1fa45b48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  preview: {fileID: 10309, guid: 0000000000000000f000000000000000, type: 0}
+  puzzleName: 42
+  yRotation: 1
+  xRotation: 1
+  moveable: 1
   pieces:
   - {fileID: 5833172661327067178}
   - {fileID: 3959915269172208011}
@@ -76,8 +79,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ignoreZRotation: 0
-  mirrorX: 0
-  mirrorY: 0
+  flipX: 0
+  flipY: 0
   rootPosition: {x: 0, y: 0, z: 0}
   rootRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!64 &7830619356980054929
@@ -107,8 +110,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ignoreZRotation: 0
-  mirrorX: 0
-  mirrorY: 0
+  flipX: 0
+  flipY: 0
   rootPosition: {x: 0, y: 0, z: 0}
   rootRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1001 &3662539316671561137

@@ -44,7 +44,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c51f07552f5dc4316b09c97c1fa45b48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  preview: {fileID: 10309, guid: 0000000000000000f000000000000000, type: 0}
+  puzzleName: Elephant
+  yRotation: 1
+  xRotation: 1
+  moveable: 0
   pieces:
   - {fileID: 7342424447419412948}
 --- !u!64 &7496378901140994857
@@ -74,8 +77,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ignoreZRotation: 0
-  mirrorX: 0
-  mirrorY: 0
+  flipX: 0
+  flipY: 0
   rootPosition: {x: 0, y: 0, z: 0}
   rootRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1001 &872923276316733166
