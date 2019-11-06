@@ -15,7 +15,7 @@ public class Puzzle : MonoBehaviour
     
     private Vector3 rootOffset;
 
-    private bool solving;
+    public bool solving;
 
     public static float PositionDeadzone
     {
@@ -29,13 +29,14 @@ public class Puzzle : MonoBehaviour
     {
         get
         {
-            return (10.0f);
+            return (7.0f);
         }
     }
 
     private void Awake()
     {
         rootOffset = pieces[0].transform.position;
+        solving = false;
     }
 
     public bool Correct
