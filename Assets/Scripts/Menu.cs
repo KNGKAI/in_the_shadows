@@ -53,10 +53,19 @@ public class Menu : MonoBehaviour
         testObject.SetActive(false);
         switch (active)
         {
-            case 0: menuObject.SetActive(true); break;
-            case 1: playObject.SetActive(true); break;
-            case 2: testObject.SetActive(true); break;
-            default: break;
+            case 0:
+                menuObject.SetActive(true);
+                break;
+            case 1:
+                playObject.SetActive(true);
+                PlayerPrefs.SetInt("Mode", 0);
+                break;
+            case 2:
+                testObject.SetActive(true);
+                PlayerPrefs.SetInt("Mode", 1);
+                break;
+            default:
+                break;
         }
     }
 }

@@ -75,12 +75,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c51f07552f5dc4316b09c97c1fa45b48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  menu: {fileID: 0}
   puzzleName: Teapot
-  yRotation: 1
   xRotation: 0
+  yRotation: 1
+  zRotation: 1
   moveable: 0
   pieces:
   - {fileID: 4227510403405978245}
+  solving: 0
 --- !u!1001 &8167522838992878419
 PrefabInstance:
   m_ObjectHideFlags: 0

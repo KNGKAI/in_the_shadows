@@ -36,22 +36,22 @@ public class Controller : MonoBehaviour
         }
         else if (Input.GetKey(KeyCode.Mouse0))
         {
-            if (Input.GetKey(KeyCode.LeftControl))
-            {
-                RotateObject();
-            }
-            else
+            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftShift))
             {
                 MoveObject();
             }
+            else
+            {
+                RotateObject();
+            }
         }
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && debug)
         {
             puzzle.Solve();
         }
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Level.LoadMenu();
+            Level.LoadMenuStatic();
         }
         if (Idle)
         {
@@ -67,26 +67,6 @@ public class Controller : MonoBehaviour
         if (idleIndex > 0)
         {
             idleIndex--;
-        }
-    }
-
-    private void OnGUI()
-    {
-        Texture2D t;
-
-        if (Idle)
-        {
-            t = new Texture2D(1, 1);
-            if (puzzle.Correct)
-            {
-                t.SetPixel(0, 0, Color.green);
-            }
-            else
-            {
-                t.SetPixel(0, 0, Color.red);
-            }
-            t.Apply();
-            GUI.DrawTexture(new Rect(0, Screen.height - 100, 100, 100), t);
         }
     }
 
@@ -123,11 +103,21 @@ public class Controller : MonoBehaviour
         cam = Camera.main.transform;
         x = Input.GetAxis("Mouse X") * rotateSpeed * Time.deltaTime;
         y = Input.GetAxis("Mouse Y") * rotateSpeed * Time.deltaTime;
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftControl))
         {
-            if (puzzle.xRotation)
+            if (Input.GetKey(KeyCode.Z))
             {
-                selectedObject.transform.RotateAround(selectedObject.transform.position, Vector3.right, y);
+                if (puzzle.zRotation)
+                {
+                    selectedObject.transform.RotateAround(selectedObject.transform.position, Vector3.forward, y);
+                }
+            }
+            else
+            {
+                if (puzzle.xRotation)
+                {
+                    selectedObject.transform.RotateAround(selectedObject.transform.position, Vector3.right, y);
+                }
             }
         }
         else

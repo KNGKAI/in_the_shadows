@@ -5,10 +5,13 @@ using UnityEngine;
 [System.Serializable]
 public class Puzzle : MonoBehaviour
 {
+    public GameObject menu;
+
     public string puzzleName;
 
-    public bool yRotation;
     public bool xRotation;
+    public bool yRotation;
+    public bool zRotation;
     public bool moveable;
 
     public Piece[] pieces;
@@ -29,7 +32,7 @@ public class Puzzle : MonoBehaviour
     {
         get
         {
-            return (7.0f);
+            return (10.0f);
         }
     }
 
@@ -37,6 +40,7 @@ public class Puzzle : MonoBehaviour
     {
         rootOffset = pieces[0].transform.position;
         solving = false;
+        menu.SetActive(false);
     }
 
     public bool Correct
@@ -80,16 +84,18 @@ public class Puzzle : MonoBehaviour
                 piece.transform.position = new Vector3(
                     Random.Range(-1.0f, 1.0f),
                     Random.Range(-1.0f, 1.0f),
-                    0.0f//Random.Range(-1.0f, 1.0f)
+                    0.0f
                     );
             }
             if (yRotation)
             {
-                piece.Rotate(0, Random.Range(-90.0f, 90.0f), 0);
+                float r = Random.Range(-90.0f, 90.0f);
+                piece.Rotate(0, Mathf.Abs(r) < RotationDeadzone ? r * RotationDeadzone : r, 0);
             }
             if (xRotation)
             {
-                piece.Rotate(Random.Range(-90.0f, 90.0f), 0, 0);
+                float r = Random.Range(-90.0f, 90.0f);
+                piece.Rotate(Mathf.Abs(r) < RotationDeadzone ? r * RotationDeadzone : r, 0, 0);
             }
         }
     }
@@ -155,9 +161,11 @@ public class Puzzle : MonoBehaviour
                 busy = false;
             }
         }
-        Debug.Log(puzzleName + " solved");
-        PlayerPrefs.SetInt(puzzleName, 1);
-        yield return new WaitForSeconds(3.0f);
-        Level.LoadMenu();
+        if (PlayerPrefs.GetInt("Mode") == 0)
+        {
+            PlayerPrefs.SetInt(puzzleName, 1);
+        }
+        yield return new WaitForSeconds(1.0f);
+        menu.SetActive(true);
     }
 }

@@ -25,12 +25,22 @@ public class Level : MonoBehaviour
         SceneManager.LoadScene("Teapot");
     }
 
-    public static void LoadMenu()
+    public void LoadMenu()
     {
         SceneManager.LoadScene("Menu");
     }
 
-    public static void QuitGame()
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
+
+    public static void LoadMenuStatic()
+    {
+        SceneManager.LoadScene("Menu");
+    }
+
+    public static void QuitGameStatic()
     {
         Application.Quit();
     }
